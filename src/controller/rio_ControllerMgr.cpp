@@ -84,6 +84,12 @@ void ControllerMgr::initializeDefault_()
         arg.path = "gamecontrollerdb.txt";
 
         char* file = (char*)FileDeviceMgr::instance()->load(arg);
+
+        // NOTE: MAY SUCK? Assumes that the last byte can safely be discarded
+        file[arg.read_size - 1] = '\0';
+        // glfwUpdateGamepadMappings will read until a null terminator
+        // we need to null-terminate. original file ends in 0x0A so this is fine
+
         glfwUpdateGamepadMappings(file);
         MemUtil::free(file); file = nullptr;
     }

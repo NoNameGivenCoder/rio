@@ -66,7 +66,7 @@ void VertexArray::process()
                         stream->mInternalFormat.elem_count,
                         stream->mInternalFormat.type,
                         stride,
-                        (void*)stream->mOffset
+                        reinterpret_cast<void*>(static_cast<std::uintptr_t>(stream->mOffset))
                     ));
                 }
                 else
@@ -77,7 +77,7 @@ void VertexArray::process()
                         stream->mInternalFormat.type,
                         stream->mInternalFormat.normalized,
                         stride,
-                        (void*)stream->mOffset
+                        reinterpret_cast<void*>(static_cast<std::uintptr_t>(stream->mOffset))
                     ));
                 }
             }
