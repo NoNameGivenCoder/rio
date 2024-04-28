@@ -1,10 +1,11 @@
 #ifndef RIO_TYPES_H
 #define RIO_TYPES_H
 
+/*
 #if !(defined(_WIN32) || defined(__WUT__))
     #error "Unknown host platform."
 #endif
-
+*/
 #if !(defined(RIO_DEBUG) || defined(RIO_RELEASE))
     #error "Build target is not defined."
 #elif (defined(RIO_DEBUG) && defined(RIO_RELEASE))
@@ -17,14 +18,11 @@
     #define RIO_FORCE_INLINE __attribute__((always_inline)) inline
 #endif
 
-#if defined(_WIN32)
-    #define RIO_IS_WIN  1
-    #define RIO_IS_CAFE 0
-#elif defined(__WUT__)
+#if defined(__WUT__)
     #define RIO_IS_WIN  0
     #define RIO_IS_CAFE 1
 #else
-    #define RIO_IS_WIN  0
+    #define RIO_IS_WIN  1
     #define RIO_IS_CAFE 0
 #endif
 

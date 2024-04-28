@@ -81,18 +81,24 @@ bool Window::initialize_(bool resizable, u32 gl_major, u32 gl_minor)
 {
     // Initialize GLFW
     if (!glfwInit())
+    {
+        RIO_LOG("Failed to initialize GLFW.\n");
         return false;
+    }
 
-    if (resizable)
+    /*if (resizable)
     {
         // Start maximized if resizable
         glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
     }
-    else
+    else*/
+    if (!resizable)
     {
         // Disable resizing
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
     }
+
+    glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
 
     // Request OpenGL Core Profile
     RIO_LOG("OpenGL Context Version: %u.%u\n", gl_major, gl_minor);
@@ -108,6 +114,7 @@ bool Window::initialize_(bool resizable, u32 gl_major, u32 gl_minor)
     mNativeWindow.mpGLFWwindow = glfwCreateWindow(mWidth, mHeight, "Game", nullptr, nullptr);
     if (!mNativeWindow.mpGLFWwindow)
     {
+        RIO_LOG("Failed to create GLFW window.\n");
         terminate_();
         return false;
     }
@@ -120,16 +127,25 @@ bool Window::initialize_(bool resizable, u32 gl_major, u32 gl_minor)
     // Make context of window current
     glfwMakeContextCurrent(mNativeWindow.mpGLFWwindow);
 
-    [[maybe_unused]] const char* renderer_str;
-    RIO_GL_CALL(renderer_str = (const char*)glGetString(GL_RENDERER));
-    RIO_LOG("Renderer: %s\n", renderer_str);
+    // Retrieve and log the renderer string
+    const char* renderer_str = (const char*)glGetString(GL_RENDERER);
+    if (renderer_str)
+    {
+        RIO_LOG("Renderer: %s\n", renderer_str);
+    }
+    else
+    {
+        RIO_LOG("Failed to retrieve the renderer string.\n");
+    }
 
     // Set swap interval to 1 by default
     setSwapInterval(1);
 
     // Initialize GLEW
-    if (glewInit() != GLEW_OK)
+    GLenum err = glewInit();
+    if (err != GLEW_OK && err != GLEW_ERROR_NO_GLX_DISPLAY)
     {
+        RIO_LOG("GLEW Initialization Error: %s (code: %d)\n", glewGetErrorString(err), err);
         terminate_();
         return false;
     }
@@ -137,12 +153,15 @@ bool Window::initialize_(bool resizable, u32 gl_major, u32 gl_minor)
     // Check clip control extension
     if (!GLEW_VERSION_4_5 && !GLEW_ARB_clip_control)
     {
-        terminate_();
-        return false;
+        RIO_LOG("Required OpenGL extensions not supported: GLEW_VERSION_4_5, GLEW_ARB_clip_control. Continuing anyway.\n");
+        /*terminate_();
+        return false;*/
     }
-
+		else
+		{
     // Change coordinate-system to be compliant with GX2
     RIO_GL_CALL(glClipControl(GL_UPPER_LEFT, GL_NEGATIVE_ONE_TO_ONE));
+    }
 
     // The screen will now be rendered upside-down.
     // Therefore, we will render it to our own frame buffer, then render that
@@ -151,35 +170,28 @@ bool Window::initialize_(bool resizable, u32 gl_major, u32 gl_minor)
     // Load screen shader
     gScreenShader.load("screen_shader_win");
 
-    // Create screen Vertex Array
+    // Create and setup vertex array and buffer
     gVertexArray = new VertexArray();
-    if (!gVertexArray)
-    {
-        terminate_();
-        return false;
-    }
-
-    // Create screen Vertex Buffer
     gVertexBuffer = new VertexBuffer(vertices, sizeof(vertices), sizeof(Vertex), 0);
-    if (!gVertexBuffer)
+    if (!gVertexArray || !gVertexBuffer)
     {
+        RIO_LOG("Failed to create vertex array or buffer.\n");
         terminate_();
         return false;
     }
 
     // Process Vertex Array
-    gVertexArray->addAttribute(gPosStream,      *gVertexBuffer);
+    gVertexArray->addAttribute(gPosStream, *gVertexBuffer);
     gVertexArray->addAttribute(gTexCoordStream, *gVertexBuffer);
     gVertexArray->process();
 
-    // Create Frame Buffer
+    // Create and bind the Frame Buffer
     if (!createFb_())
     {
+        RIO_LOG("Failed to create frame buffer.\n");
         terminate_();
         return false;
     }
-
-    // Bind our Frame Buffer
     RIO_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, mNativeWindow.mFramebufferHandle));
     RIO_GL_CALL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mNativeWindow.mColorBufferTextureHandle, 0));
     RIO_GL_CALL(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mNativeWindow.mDepthBufferHandle));
@@ -187,6 +199,7 @@ bool Window::initialize_(bool resizable, u32 gl_major, u32 gl_minor)
     // Enable scissor test
     RIO_GL_CALL(glEnable(GL_SCISSOR_TEST));
 
+    // Set callback if window is resizable
     if (resizable)
         glfwSetFramebufferSizeCallback(mNativeWindow.mpGLFWwindow, &Window::resizeCallback_);
 
