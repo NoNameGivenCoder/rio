@@ -107,6 +107,8 @@ bool Window::initialize_(bool resizable, u32 gl_major, u32 gl_minor)
   //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+    glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, 1);
+
     // Enforce double-buffering
     glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
 
