@@ -77,7 +77,7 @@ void Window::resizeCallback_(GLFWwindow* glfw_window, s32 width, s32 height)
     window->resizeCallback_(width, height);
 }
 
-bool Window::initialize_(bool resizable, u32 gl_major, u32 gl_minor)
+bool Window::initialize_(bool resizable, bool invisible, u32 gl_major, u32 gl_minor)
 {
     // Initialize GLFW
     if (!glfwInit())
@@ -96,6 +96,12 @@ bool Window::initialize_(bool resizable, u32 gl_major, u32 gl_minor)
     {
         // Disable resizing
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    }
+
+    if (invisible)
+    {
+        // make window invisible for headless operations
+        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
     }
 
     glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);

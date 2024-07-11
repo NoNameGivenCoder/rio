@@ -27,6 +27,7 @@ public:
         u32 width = 1280, u32 height = 720
 #if RIO_IS_WIN
         , bool resizable = false
+        , bool invisible = false
         , u32 gl_major = 4
         , u32 gl_minor = 0
 #endif // RIO_IS_WIN
@@ -158,6 +159,7 @@ private:
     bool initialize_(
 #if RIO_IS_WIN
         bool resizable
+        , bool invisible
         , u32 gl_major
         , u32 gl_minor
 #endif // RIO_IS_WIN
