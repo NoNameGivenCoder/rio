@@ -18,6 +18,7 @@ WinGamepadController::WinGamepadController(ControllerMgr* mgr, s32 channel)
 
 void WinGamepadController::calcImpl_()
 {
+#ifndef RIO_NO_CONTROLLERS_WIN
     if (!glfwJoystickIsGamepad(mChannel) || !glfwGetGamepadState(mChannel, &mState))
     {
         mIsConnected = false;
@@ -61,6 +62,7 @@ void WinGamepadController::calcImpl_()
     mRightAnalogTrigger = 0.0f;
 
     setPointer_(false, false, { 0.0f, 0.0f });
+#endif
 }
 
 }

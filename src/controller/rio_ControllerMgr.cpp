@@ -78,7 +78,7 @@ void ControllerMgr::initializeDefault_()
     {
         mControllers.push_back(new CafeDRCController(this));
     }
-#elif RIO_IS_WIN
+#elif RIO_IS_WIN && !defined(RIO_NO_CONTROLLERS_WIN)
     {
         FileDevice::LoadArg arg;
         arg.path = "gamecontrollerdb.txt";

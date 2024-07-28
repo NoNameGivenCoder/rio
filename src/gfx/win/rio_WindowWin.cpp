@@ -104,16 +104,16 @@ bool Window::initialize_(bool resizable, bool invisible, u32 gl_major, u32 gl_mi
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
     }
 
+#ifndef __EMSCRIPTEN__
     glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
-
+    glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, 1);
+#endif
     // Request OpenGL Core Profile
     RIO_LOG("OpenGL Context Version: %u.%u\n", gl_major, gl_minor);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, gl_major);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl_minor);
   //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, 1);
 
     // Enforce double-buffering
     glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
@@ -151,7 +151,11 @@ bool Window::initialize_(bool resizable, bool invisible, u32 gl_major, u32 gl_mi
 
     // Initialize GLEW
     GLenum err = glewInit();
+#ifndef __EMSCRIPTEN__
     if (err != GLEW_OK && err != GLEW_ERROR_NO_GLX_DISPLAY)
+#else
+    if (err != GLEW_OK)
+#endif
     {
         RIO_LOG("GLEW Initialization Error: %s (code: %d)\n", glewGetErrorString(err), err);
         terminate_();

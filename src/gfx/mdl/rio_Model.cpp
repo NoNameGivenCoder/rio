@@ -40,6 +40,8 @@ Model::Model(const res::Model* res_mdl)
         Mesh& mesh = mMeshes[i];
         u32 mat_idx = mesh.resMesh().materialIndex();
 
+        if (mNumMaterials == 0)
+            continue;
         RIO_ASSERT(mat_idx < mNumMaterials);
         Material& material = mMaterials[mat_idx];
 

@@ -24,7 +24,9 @@ private:
     bool                mIsConnected;
     s32                 mChannel;
     const char*         mGamepadName;
+#ifndef RIO_NO_CONTROLLERS_WIN
     GLFWgamepadstate    mState;
+#endif
 };
 
 }
