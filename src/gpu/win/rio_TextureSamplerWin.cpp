@@ -87,6 +87,16 @@ void TextureSampler2D::updateFilter_() const
     }
 }
 
+#ifdef RIO_GLES
+    #define GL_CLAMP_TO_BORDER GL_CLAMP_TO_EDGE
+    #define GL_MIRROR_CLAMP_EXT GL_MIRRORED_REPEAT//GL_MIRROR_CLAMP_TO_EDGE_EXT
+    #define GL_CLAMP_TO_EDGE_TO_BORDER GL_CLAMP_TO_EDGE
+    #define GL_MIRROR_CLAMP_TO_BORDER_EXT GL_MIRRORED_REPEAT//GL_MIRROR_CLAMP_TO_EDGE_EXT
+#endif
+
+// GL_CLAMP was removed in opengl 3.2
+#define GL_CLAMP GL_CLAMP_TO_EDGE
+
 void TextureSampler2D::updateWrap_() const
 {
     switch (mWrapX)
@@ -176,14 +186,18 @@ void TextureSampler2D::updateWrap_() const
 
 void TextureSampler2D::updateBorderColor_() const
 {
+    #ifndef RIO_GLES
     RIO_GL_CALL(glSamplerParameterfv(mSamplerInner, GL_TEXTURE_BORDER_COLOR, mBorderColor));
+    #endif
 }
 
 void TextureSampler2D::updateLOD_() const
 {
     RIO_GL_CALL(glSamplerParameterf(mSamplerInner, GL_TEXTURE_MIN_LOD, mMinLOD));
     RIO_GL_CALL(glSamplerParameterf(mSamplerInner, GL_TEXTURE_MAX_LOD, mMaxLOD));
+    #ifndef RIO_GLES
     RIO_GL_CALL(glSamplerParameterf(mSamplerInner, GL_TEXTURE_LOD_BIAS, mLODBias));
+    #endif
 }
 
 void TextureSampler2D::updateDepthComp_() const

@@ -1,3 +1,10 @@
+#ifdef RIO_GLES
+    #define GLAD_EGL_IMPLEMENTATION
+    #define GLAD_GLES2_IMPLEMENTATION
+#else
+    #define GLAD_GL_IMPLEMENTATION
+#endif
+
 #include <misc/rio_Types.h>
 
 #if RIO_IS_WIN
@@ -8,6 +15,12 @@
 #include <gpu/rio_Shader.h>
 #include <gpu/rio_VertexArray.h>
 
+/*
+#ifndef __EMSCRIPTEN__
+    #define GLFW_EXPOSE_NATIVE_EGL 1
+    #include <GLFW/glfw3native.h>
+#endif
+*/
 namespace {
 
 static rio::Shader gScreenShader;
@@ -85,7 +98,6 @@ bool Window::initialize_(bool resizable, bool invisible, u32 gl_major, u32 gl_mi
         RIO_LOG("Failed to initialize GLFW.\n");
         return false;
     }
-
     /*if (resizable)
     {
         // Start maximized if resizable
@@ -110,10 +122,16 @@ bool Window::initialize_(bool resizable, bool invisible, u32 gl_major, u32 gl_mi
 #endif
     // Request OpenGL Core Profile
     RIO_LOG("OpenGL Context Version: %u.%u\n", gl_major, gl_minor);
+#ifdef RIO_GLES
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+#endif
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, gl_major);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl_minor);
   //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    //glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
+
 
     // Enforce double-buffering
     glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
@@ -135,6 +153,19 @@ bool Window::initialize_(bool resizable, bool invisible, u32 gl_major, u32 gl_mi
 
     // Make context of window current
     glfwMakeContextCurrent(mNativeWindow.mpGLFWwindow);
+/*
+#ifndef __EMSCRIPTEN__
+    EGLDisplay display = glfwGetEGLDisplay();
+    int egl_version = gladLoaderLoadEGL(display);
+    printf("EGL %d.%d\n", GLAD_VERSION_MAJOR(egl_version), GLAD_VERSION_MINOR(egl_version));
+#endif
+*/
+#ifdef RIO_GLES
+    gladLoadGLES2(glfwGetProcAddress);
+#else
+    gladLoadGL(glfwGetProcAddress);
+#endif
+
 
     // Retrieve and log the renderer string
     const char* renderer_str = (const char*)glGetString(GL_RENDERER);
@@ -168,22 +199,8 @@ bool Window::initialize_(bool resizable, bool invisible, u32 gl_major, u32 gl_mi
         RIO_LOG("Failed to retrieve the OpenGL core profile version string.\n");
     }
 
-
     // Set swap interval to 1 by default
     setSwapInterval(1);
-
-    // Initialize GLEW
-    GLenum err = glewInit();
-#ifndef __EMSCRIPTEN__
-    if (err != GLEW_OK && err != GLEW_ERROR_NO_GLX_DISPLAY)
-#else
-    if (err != GLEW_OK)
-#endif
-    {
-        RIO_LOG("GLEW Initialization Error: %s (code: %d)\n", glewGetErrorString(err), err);
-        terminate_();
-        return false;
-    }
 
     // Check clip control extension
     #ifndef RIO_NO_CLIP_CONTROL

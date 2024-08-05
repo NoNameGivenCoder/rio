@@ -33,13 +33,13 @@ void RenderState::apply() const
         RIO_GL_CALL(glEnable(GL_CULL_FACE));
         RIO_GL_CALL(glCullFace(GL_FRONT_AND_BACK));
     }
-
+#ifndef RIO_GLES
     RIO_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, mPolygonMode));
 
     RIO_GL_CALL((mPolygonOffsetEnable ? glEnable : glDisable)(GL_POLYGON_OFFSET_FILL));
     RIO_GL_CALL((mPolygonOffsetPointLineEnable ? glEnable : glDisable)(GL_POLYGON_OFFSET_POINT));
     RIO_GL_CALL((mPolygonOffsetPointLineEnable ? glEnable : glDisable)(GL_POLYGON_OFFSET_LINE));
-
+#endif
     RIO_GL_CALL((mBlendEnable ? glEnable : glDisable)(GL_BLEND));
     RIO_GL_CALL(glBlendFuncSeparate(mBlendFactorSrcRGB, mBlendFactorDstRGB, mBlendFactorSrcA, mBlendFactorDstA));
     RIO_GL_CALL(glBlendEquationSeparate(mBlendEquationRGB, mBlendEquationA));
@@ -97,12 +97,13 @@ void RenderState::applyCullingAndPolygonModeAndPolygonOffset() const
         RIO_GL_CALL(glEnable(GL_CULL_FACE));
         RIO_GL_CALL(glCullFace(GL_FRONT_AND_BACK));
     }
-
+#ifndef RIO_GLES
     RIO_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, mPolygonMode));
 
     RIO_GL_CALL((mPolygonOffsetEnable ? glEnable : glDisable)(GL_POLYGON_OFFSET_FILL));
     RIO_GL_CALL((mPolygonOffsetPointLineEnable ? glEnable : glDisable)(GL_POLYGON_OFFSET_POINT));
     RIO_GL_CALL((mPolygonOffsetPointLineEnable ? glEnable : glDisable)(GL_POLYGON_OFFSET_LINE));
+#endif
 }
 
 }

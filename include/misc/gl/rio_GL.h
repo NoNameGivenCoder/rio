@@ -3,7 +3,15 @@
 
 #include <misc/rio_Types.h>
 
-#include <GL/glew.h>
+#ifdef RIO_GLES
+    #include <glad/gles2.h>
+    #define glDepthRange glDepthRangef
+    #define glClearDepth glClearDepthf
+#else
+    #include <glad/gl.h>
+#endif
+
+#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
 #ifdef RIO_DEBUG

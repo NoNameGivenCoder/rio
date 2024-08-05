@@ -16,10 +16,12 @@ enum Drawer::PrimitiveMode : u32
     TRIANGLES                   = GL_TRIANGLES,
     TRIANGLE_FAN                = GL_TRIANGLE_FAN,
     TRIANGLE_STRIP              = GL_TRIANGLE_STRIP,
+#ifndef RIO_GLES
     LINES_ADJACENCY             = GL_LINES_ADJACENCY,
     LINE_STRIP_ADJACENCY        = GL_LINE_STRIP_ADJACENCY,
     TRIANGLES_ADJACENCY         = GL_TRIANGLES_ADJACENCY,
     TRIANGLE_STRIP_ADJACENCY    = GL_TRIANGLE_STRIP_ADJACENCY,
+#endif
     LINE_LOOP                   = GL_LINE_LOOP
 };
 

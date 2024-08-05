@@ -86,6 +86,7 @@ void Texture2DUtil::bind(u32 handle)
 
 void Texture2DUtil::setSwizzleCurrent(u32 compMap)
 {
+#ifndef RIO_GLES
     static const GLint TEX_COMP_MAP_TO_GL[6] = {
         GL_RED, GL_GREEN, GL_BLUE,
         GL_ALPHA, GL_ZERO, GL_ONE
@@ -99,6 +100,7 @@ void Texture2DUtil::setSwizzleCurrent(u32 compMap)
     };
 
     RIO_GL_CALL(glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzle));
+#endif
 }
 
 void Texture2DUtil::setNumMipsCurrent(u32 mipLevels)
@@ -188,7 +190,7 @@ void Texture2DUtil::uploadTextureCurrent(
     case TEXTURE_FORMAT_BC2_SRGB:
     case TEXTURE_FORMAT_BC3_SRGB:
         {
-            RIO_GL_CALL(glCompressedTexImage2DARB(
+            RIO_GL_CALL(glCompressedTexImage2D(
                 GL_TEXTURE_2D,
                 0,
                 nativeFormat.internalformat,
@@ -202,7 +204,7 @@ void Texture2DUtil::uploadTextureCurrent(
             if (mipLevels > 1)
             {
                 for (u32 i = 0; i < mipLevels - 2; i++)
-                    RIO_GL_CALL(glCompressedTexImage2DARB(
+                    RIO_GL_CALL(glCompressedTexImage2D(
                         GL_TEXTURE_2D,
                         i + 1,
                         nativeFormat.internalformat,
@@ -213,7 +215,7 @@ void Texture2DUtil::uploadTextureCurrent(
                         mipmaps ? ((u8*)mipmaps + mipLevelOffset[i]) : nullptr
                     ));
 
-                RIO_GL_CALL(glCompressedTexImage2DARB(
+                RIO_GL_CALL(glCompressedTexImage2D(
                     GL_TEXTURE_2D,
                     (mipLevels - 2) + 1,
                     nativeFormat.internalformat,
