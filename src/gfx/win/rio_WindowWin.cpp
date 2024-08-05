@@ -118,6 +118,7 @@ bool Window::initialize_(bool resizable, bool invisible, u32 gl_major, u32 gl_mi
     // Enforce double-buffering
     glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
 
+
     // Create the window instance
     mNativeWindow.mpGLFWwindow = glfwCreateWindow(mWidth, mHeight, "Game", nullptr, nullptr);
     if (!mNativeWindow.mpGLFWwindow)
@@ -139,12 +140,34 @@ bool Window::initialize_(bool resizable, bool invisible, u32 gl_major, u32 gl_mi
     const char* renderer_str = (const char*)glGetString(GL_RENDERER);
     if (renderer_str)
     {
-        RIO_LOG("Renderer: %s\n", renderer_str);
+        RIO_LOG("OpenGL Renderer: %s\n", renderer_str);
     }
     else
     {
         RIO_LOG("Failed to retrieve the renderer string.\n");
     }
+    // Retrieve and log the OpenGL version string
+    const char* version_str = (const char*)glGetString(GL_VERSION);
+    if (version_str)
+    {
+        RIO_LOG("OpenGL Version: %s\n", version_str);
+    }
+    else
+    {
+        RIO_LOG("Failed to retrieve the OpenGL version string.\n");
+    }
+
+    // Retrieve and log the OpenGL core profile version string
+    const char* core_profile_version_str = (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+    if (core_profile_version_str)
+    {
+        RIO_LOG("OpenGL GLSL Version: %s\n", core_profile_version_str);
+    }
+    else
+    {
+        RIO_LOG("Failed to retrieve the OpenGL core profile version string.\n");
+    }
+
 
     // Set swap interval to 1 by default
     setSwapInterval(1);
@@ -447,6 +470,25 @@ void Window::swapBuffers() const
 
     // Restore viewport and scissor
     restoreVp_();
+
+    // FPS calculation and update
+    static double lastTime = glfwGetTime();
+    static int nbFrames = 0;
+
+    // Measure speed
+    double currentTime = glfwGetTime();
+    nbFrames++;
+    if (currentTime - lastTime >= 1.0) { // If last update was more than 1 second ago
+        double fps = double(nbFrames) / (currentTime - lastTime);
+
+        char title[256];
+        snprintf(title, sizeof(title), "Game - FPS: %.2f", fps);
+
+        glfwSetWindowTitle(mNativeWindow.mpGLFWwindow, title);
+
+        nbFrames = 0;
+        lastTime = currentTime;
+    }
 }
 
 void Window::clearColor(f32 r, f32 g, f32 b, f32 a)
