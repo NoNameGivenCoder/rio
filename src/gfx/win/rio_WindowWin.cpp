@@ -204,9 +204,10 @@ bool Window::initialize_(bool resizable, bool invisible, u32 gl_major, u32 gl_mi
 
     // Check clip control extension
     #ifndef RIO_NO_CLIP_CONTROL
-    if (!GLEW_VERSION_4_5 && !GLEW_ARB_clip_control)
+    if (!(GLAD_GL_VERSION_4_5 || GLAD_GL_ARB_clip_control))
     {
-        RIO_LOG("Required OpenGL extensions not supported: GLEW_VERSION_4_5, GLEW_ARB_clip_control. Continuing anyway.\n");
+        printf("Required OpenGL extensions not supported: GL_VERSION_4_5, GL_ARB_clip_control. Continuing anyway.\n");
+
         /*terminate_();
         return false;*/
     }
