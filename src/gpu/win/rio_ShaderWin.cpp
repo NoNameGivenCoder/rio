@@ -117,6 +117,29 @@ void Shader::load(const char* c_vertex_shader_src, const char* c_fragment_shader
         RIO_GL_CALL(glUniformBlockBinding(mShaderProgram, i, i));
 }
 
+// Helper function to adjust the shader version if necessary
+void changeShaderSrcVersionToGLSL300ES(std::string& shader_src)
+{
+    // Replace GLSL > 1 headers with this:
+    // GLSL 3.00 ES, medium precision
+    static const std::string new_version = "#version 300 es\nprecision mediump float;";
+
+
+    std::size_t version_pos = shader_src.find("#version");
+    if (version_pos != std::string::npos) {
+        std::size_t line_end = shader_src.find('\n', version_pos);
+        std::string version_line = shader_src.substr(version_pos, line_end - version_pos);
+
+        // Extract the version number after "#version "
+        // 9 is the length of "#version "
+        std::string version_number = version_line.substr(9);
+
+        // Check if the version number is greater than 1 and does not end with "es"
+        if (std::stoi(version_number) > 100 && version_number.find("es") == std::string::npos)
+            shader_src.replace(version_pos, line_end - version_pos, new_version); // new version directive
+    }
+}
+
 void Shader::load(const char* base_fname, ShaderMode)
 {
     const std::string base_path = std::string("shaders/") + base_fname;
@@ -131,7 +154,12 @@ void Shader::load(const char* base_fname, ShaderMode)
         vertex_shader_src_file_len = arg.read_size;
     }
 
-    const std::string vertex_shader_src = std::string(vertex_shader_src_file, vertex_shader_src_file_len);
+    std::string vertex_shader_src = std::string(vertex_shader_src_file, vertex_shader_src_file_len);
+
+#ifdef RIO_GLES
+    changeShaderSrcVersionToGLSL300ES(vertex_shader_src);
+#endif
+
     const char* const c_vertex_shader_src = vertex_shader_src.c_str();
 
     char* fragment_shader_src_file;
@@ -144,7 +172,12 @@ void Shader::load(const char* base_fname, ShaderMode)
         fragment_shader_src_file_len = arg.read_size;
     }
 
-    const std::string fragment_shader_src = std::string(fragment_shader_src_file, fragment_shader_src_file_len);
+    std::string fragment_shader_src = std::string(fragment_shader_src_file, fragment_shader_src_file_len);
+
+#ifdef RIO_GLES
+    changeShaderSrcVersionToGLSL300ES(fragment_shader_src);
+#endif
+
     const char* const c_fragment_shader_src = fragment_shader_src.c_str();
 
     load(c_vertex_shader_src, c_fragment_shader_src);

@@ -90,8 +90,15 @@ void Window::resizeCallback_(GLFWwindow* glfw_window, s32 width, s32 height)
     window->resizeCallback_(width, height);
 }
 
+void errorCallbackForGLFW(int error, const char* msg)
+{
+    RIO_LOG("GLFW error %d: %s\n", error, msg);
+}
+
 bool Window::initialize_(bool resizable, bool invisible, u32 gl_major, u32 gl_minor)
 {
+    glfwSetErrorCallback(errorCallbackForGLFW);
+
     // Initialize GLFW
     if (!glfwInit())
     {
@@ -129,9 +136,9 @@ bool Window::initialize_(bool resizable, bool invisible, u32 gl_major, u32 gl_mi
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl_minor);
   //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    //glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
-
+#if defined(RIO_GLES) && !defined(__EMSCRIPTEN__)
+    glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
+#endif
 
     // Enforce double-buffering
     glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);

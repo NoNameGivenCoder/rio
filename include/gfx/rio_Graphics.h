@@ -73,8 +73,13 @@ public:
     {
         ENUM_VAL(BLEND_FUNC_ADD,            GL_FUNC_ADD,                GX2_BLEND_COMBINE_MODE_ADD),
         ENUM_VAL(BLEND_FUNC_SUB,            GL_FUNC_SUBTRACT,           GX2_BLEND_COMBINE_MODE_SUB),
+#if defined(RIO_GLES) && !defined(GL_ES_VERSION_3_0)
+        ENUM_VAL(BLEND_FUNC_MIN,            GL_MIN_EXT,                     GX2_BLEND_COMBINE_MODE_MIN),
+        ENUM_VAL(BLEND_FUNC_MAX,            GL_MAX_EXT,                     GX2_BLEND_COMBINE_MODE_MAX),
+#else
         ENUM_VAL(BLEND_FUNC_MIN,            GL_MIN,                     GX2_BLEND_COMBINE_MODE_MIN),
         ENUM_VAL(BLEND_FUNC_MAX,            GL_MAX,                     GX2_BLEND_COMBINE_MODE_MAX),
+#endif
         ENUM_VAL(BLEND_FUNC_REVERSE_SUB,    GL_FUNC_REVERSE_SUBTRACT,   GX2_BLEND_COMBINE_MODE_REV_SUB)
     };
 
