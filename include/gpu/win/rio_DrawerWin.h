@@ -16,26 +16,40 @@ enum Drawer::PrimitiveMode : u32
     TRIANGLES                   = GL_TRIANGLES,
     TRIANGLE_FAN                = GL_TRIANGLE_FAN,
     TRIANGLE_STRIP              = GL_TRIANGLE_STRIP,
+#ifndef RIO_GLES
     LINES_ADJACENCY             = GL_LINES_ADJACENCY,
     LINE_STRIP_ADJACENCY        = GL_LINE_STRIP_ADJACENCY,
     TRIANGLES_ADJACENCY         = GL_TRIANGLES_ADJACENCY,
     TRIANGLE_STRIP_ADJACENCY    = GL_TRIANGLE_STRIP_ADJACENCY,
+#endif
     LINE_LOOP                   = GL_LINE_LOOP
 };
 
 inline void Drawer::DrawArraysInstanced(PrimitiveMode mode, u32 count, u32 instanceCount, u32 first)
 {
+#if defined(RIO_GLES) && !defined(GL_ES_VERSION_3_0)
+    RIO_ASSERT(false);
+#else
     RIO_GL_CALL(glDrawArraysInstanced(mode, first, count, instanceCount));
+#endif
 }
 
 inline void Drawer::DrawElementsInstanced(PrimitiveMode mode, u32 count, const u32* indices, u32 instanceCount)
 {
+#if defined(RIO_GLES) && !defined(GL_ES_VERSION_3_0)
+    RIO_ASSERT(false);
+#else
     RIO_GL_CALL(glDrawElementsInstanced(mode, count, GL_UNSIGNED_INT, indices, instanceCount));
+#endif
 }
 
 inline void Drawer::DrawElementsInstanced(PrimitiveMode mode, u32 count, const u16* indices, u32 instanceCount)
 {
+#if defined(RIO_GLES) && !defined(GL_ES_VERSION_3_0)
+    RIO_ASSERT(false);
+#else
     RIO_GL_CALL(glDrawElementsInstanced(mode, count, GL_UNSIGNED_SHORT, indices, instanceCount));
+#endif
 }
 
 inline void Drawer::DrawArrays(PrimitiveMode mode, u32 count, u32 first)

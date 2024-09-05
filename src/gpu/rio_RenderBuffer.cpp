@@ -178,7 +178,8 @@ void RenderBuffer::clear(u32 color_target_index, u32 clear_flag, const Color4f& 
         if (clear_flag & CLEAR_FLAG_COLOR)
         {
             p_color_target->bind(color_target_index);
-            RIO_GL_CALL(glDrawBuffer(GL_COLOR_ATTACHMENT0 + color_target_index));
+            GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0 + color_target_index };
+            RIO_GL_CALL(glDrawBuffers(1, drawBuffers));
         }
 
         if (clear_flag & CLEAR_FLAG_DEPTH_STENCIL)

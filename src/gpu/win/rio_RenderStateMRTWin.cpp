@@ -33,7 +33,7 @@ void RenderStateMRT::apply() const
         RIO_GL_CALL(glEnable(GL_CULL_FACE));
         RIO_GL_CALL(glCullFace(GL_FRONT_AND_BACK));
     }
-
+#ifndef RIO_GLES
     RIO_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, mPolygonMode));
 
     RIO_GL_CALL((mPolygonOffsetEnable ? glEnable : glDisable)(GL_POLYGON_OFFSET_FILL));
@@ -42,7 +42,9 @@ void RenderStateMRT::apply() const
 
     for (u32 target = 0; target < Graphics::RENDER_TARGET_MAX_NUM; target++)
     {
+
         RIO_GL_CALL((mBlendEnableMask.isOnBit(target) ? glEnablei : glDisablei)(GL_BLEND, target));
+
         RIO_GL_CALL(glBlendFuncSeparatei(target,
                                          mBlendExpression[target].blend_factor_src_rgb,
                                          mBlendExpression[target].blend_factor_dst_rgb,
@@ -64,7 +66,7 @@ void RenderStateMRT::apply() const
                                  color_mask >> 2 & 1,
                                  color_mask >> 3 & 1));
     }
-
+#endif
     RIO_GL_CALL(glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE));
 }
 
@@ -81,6 +83,7 @@ void RenderStateMRT::applyDepthAndStencilTest() const
 
 void RenderStateMRT::applyColorMask() const
 {
+#ifndef RIO_GLES
     for (u32 target = 0; target < Graphics::RENDER_TARGET_MAX_NUM; target++)
     {
         u32 color_mask = mColorMask >> (target * 4) & 0xF;
@@ -90,12 +93,15 @@ void RenderStateMRT::applyColorMask() const
                                  color_mask >> 2 & 1,
                                  color_mask >> 3 & 1));
     }
+#endif
 }
 
 void RenderStateMRT::applyBlendAndFastZ() const
 {
+#ifndef RIO_GLES
     for (u32 target = 0; target < Graphics::RENDER_TARGET_MAX_NUM; target++)
     {
+
         RIO_GL_CALL((mBlendEnableMask.isOnBit(target) ? glEnablei : glDisablei)(GL_BLEND, target));
         RIO_GL_CALL(glBlendFuncSeparatei(target,
                                          mBlendExpression[target].blend_factor_src_rgb,
@@ -106,6 +112,7 @@ void RenderStateMRT::applyBlendAndFastZ() const
                                              mBlendExpression[target].blend_equation_rgb,
                                              mBlendExpression[target].blend_equation_a));
     }
+#endif
 }
 
 void RenderStateMRT::applyBlendConstantColor() const
@@ -132,12 +139,13 @@ void RenderStateMRT::applyCullingAndPolygonModeAndPolygonOffset() const
         RIO_GL_CALL(glEnable(GL_CULL_FACE));
         RIO_GL_CALL(glCullFace(GL_FRONT_AND_BACK));
     }
-
+#ifndef RIO_GLES
     RIO_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, mPolygonMode));
 
     RIO_GL_CALL((mPolygonOffsetEnable ? glEnable : glDisable)(GL_POLYGON_OFFSET_FILL));
     RIO_GL_CALL((mPolygonOffsetPointLineEnable ? glEnable : glDisable)(GL_POLYGON_OFFSET_POINT));
     RIO_GL_CALL((mPolygonOffsetPointLineEnable ? glEnable : glDisable)(GL_POLYGON_OFFSET_LINE));
+#endif
 }
 
 }

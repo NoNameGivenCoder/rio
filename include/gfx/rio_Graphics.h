@@ -73,8 +73,13 @@ public:
     {
         ENUM_VAL(BLEND_FUNC_ADD,            GL_FUNC_ADD,                GX2_BLEND_COMBINE_MODE_ADD),
         ENUM_VAL(BLEND_FUNC_SUB,            GL_FUNC_SUBTRACT,           GX2_BLEND_COMBINE_MODE_SUB),
+#if defined(RIO_GLES) && !defined(GL_ES_VERSION_3_0)
+        ENUM_VAL(BLEND_FUNC_MIN,            GL_MIN_EXT,                     GX2_BLEND_COMBINE_MODE_MIN),
+        ENUM_VAL(BLEND_FUNC_MAX,            GL_MAX_EXT,                     GX2_BLEND_COMBINE_MODE_MAX),
+#else
         ENUM_VAL(BLEND_FUNC_MIN,            GL_MIN,                     GX2_BLEND_COMBINE_MODE_MIN),
         ENUM_VAL(BLEND_FUNC_MAX,            GL_MAX,                     GX2_BLEND_COMBINE_MODE_MAX),
+#endif
         ENUM_VAL(BLEND_FUNC_REVERSE_SUB,    GL_FUNC_REVERSE_SUBTRACT,   GX2_BLEND_COMBINE_MODE_REV_SUB)
     };
 
@@ -89,17 +94,17 @@ public:
         ENUM_VAL(STENCIL_INCR_WRAP, GL_INCR_WRAP,   GX2_STENCIL_FUNCTION_INCR_WRAP),
         ENUM_VAL(STENCIL_DECR_WRAP, GL_DECR_WRAP,   GX2_STENCIL_FUNCTION_DECR_WRAP)
     };
-
+#ifndef RIO_GLES
     enum PolygonMode
     {
         ENUM_VAL(POLYGON_MODE_POINT,    GL_POINT,   GX2_POLYGON_MODE_POINT),
         ENUM_VAL(POLYGON_MODE_LINE,     GL_LINE,    GX2_POLYGON_MODE_LINE),
         ENUM_VAL(POLYGON_MODE_FILL,     GL_FILL,    GX2_POLYGON_MODE_TRIANGLE)
     };
-
+#endif
     enum
     {
-        RENDER_TARGET_MAX_NUM   = 8
+        RENDER_TARGET_MAX_NUM   = 4
     };
 
 private:

@@ -281,7 +281,11 @@ bool TextureFormatUtil::getNativeTextureFormat(
         nativeFormat.type = 0;
         return true;
     case TEXTURE_FORMAT_BC1_SRGB:
+    #ifndef RIO_GLES
         nativeFormat.internalformat = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT;
+    #else
+        RIO_ASSERT(false);
+    #endif
         nativeFormat.format = 0;
         nativeFormat.type = 0;
         return true;
@@ -291,7 +295,11 @@ bool TextureFormatUtil::getNativeTextureFormat(
         nativeFormat.type = 0;
         return true;
     case TEXTURE_FORMAT_BC2_SRGB:
+    #ifndef RIO_GLES
         nativeFormat.internalformat = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT;
+    #else
+        RIO_ASSERT(false);
+    #endif
         nativeFormat.format = 0;
         nativeFormat.type = 0;
         return true;
@@ -301,27 +309,47 @@ bool TextureFormatUtil::getNativeTextureFormat(
         nativeFormat.type = 0;
         return true;
     case TEXTURE_FORMAT_BC3_SRGB:
+    #ifndef RIO_GLES
         nativeFormat.internalformat = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
+    #else
+        RIO_ASSERT(false);
+    #endif
         nativeFormat.format = 0;
         nativeFormat.type = 0;
         return true;
     case TEXTURE_FORMAT_BC4_UNORM:
+    #ifndef RIO_GLES
         nativeFormat.internalformat = GL_COMPRESSED_RED_RGTC1;
+    #else
+        RIO_ASSERT(false);
+    #endif
         nativeFormat.format = 0;
         nativeFormat.type = 0;
         return true;
     case TEXTURE_FORMAT_BC4_SNORM:
+    #ifndef RIO_GLES
         nativeFormat.internalformat = GL_COMPRESSED_SIGNED_RED_RGTC1;
+    #else
+        RIO_ASSERT(false);
+    #endif
         nativeFormat.format = 0;
         nativeFormat.type = 0;
         return true;
     case TEXTURE_FORMAT_BC5_UNORM:
+    #ifndef RIO_GLES
         nativeFormat.internalformat = GL_COMPRESSED_RG_RGTC2;
+    #else
+        RIO_ASSERT(false);
+    #endif
         nativeFormat.format = 0;
         nativeFormat.type = 0;
         return true;
     case TEXTURE_FORMAT_BC5_SNORM:
+    #ifndef RIO_GLES
         nativeFormat.internalformat = GL_COMPRESSED_SIGNED_RG_RGTC2;
+    #else
+        RIO_ASSERT(false);
+    #endif
         nativeFormat.format = 0;
         nativeFormat.type = 0;
         return true;

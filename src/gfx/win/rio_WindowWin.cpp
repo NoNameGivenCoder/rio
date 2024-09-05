@@ -1,3 +1,10 @@
+#ifdef RIO_GLES
+    #define GLAD_EGL_IMPLEMENTATION
+    #define GLAD_GLES2_IMPLEMENTATION
+#else
+    #define GLAD_GL_IMPLEMENTATION
+#endif
+
 #include <misc/rio_Types.h>
 
 #if RIO_IS_WIN
@@ -8,6 +15,12 @@
 #include <gpu/rio_Shader.h>
 #include <gpu/rio_VertexArray.h>
 
+/*
+#ifndef __EMSCRIPTEN__
+    #define GLFW_EXPOSE_NATIVE_EGL 1
+    #include <GLFW/glfw3native.h>
+#endif
+*/
 namespace {
 
 static rio::Shader gScreenShader;
@@ -77,15 +90,21 @@ void Window::resizeCallback_(GLFWwindow* glfw_window, s32 width, s32 height)
     window->resizeCallback_(width, height);
 }
 
+void errorCallbackForGLFW(int error, const char* msg)
+{
+    RIO_LOG("GLFW error %d: %s\n", error, msg);
+}
+
 bool Window::initialize_(bool resizable, bool invisible, u32 gl_major, u32 gl_minor)
 {
+    glfwSetErrorCallback(errorCallbackForGLFW);
+
     // Initialize GLFW
     if (!glfwInit())
     {
         RIO_LOG("Failed to initialize GLFW.\n");
         return false;
     }
-
     /*if (resizable)
     {
         // Start maximized if resizable
@@ -110,13 +129,20 @@ bool Window::initialize_(bool resizable, bool invisible, u32 gl_major, u32 gl_mi
 #endif
     // Request OpenGL Core Profile
     RIO_LOG("OpenGL Context Version: %u.%u\n", gl_major, gl_minor);
+#ifdef RIO_GLES
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+#endif
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, gl_major);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl_minor);
   //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#if defined(RIO_GLES) && !defined(__EMSCRIPTEN__)
+    glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
+#endif
 
     // Enforce double-buffering
     glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
+
 
     // Create the window instance
     mNativeWindow.mpGLFWwindow = glfwCreateWindow(mWidth, mHeight, "Game", nullptr, nullptr);
@@ -134,39 +160,61 @@ bool Window::initialize_(bool resizable, bool invisible, u32 gl_major, u32 gl_mi
 
     // Make context of window current
     glfwMakeContextCurrent(mNativeWindow.mpGLFWwindow);
+/*
+#ifndef __EMSCRIPTEN__
+    EGLDisplay display = glfwGetEGLDisplay();
+    int egl_version = gladLoaderLoadEGL(display);
+    printf("EGL %d.%d\n", GLAD_VERSION_MAJOR(egl_version), GLAD_VERSION_MINOR(egl_version));
+#endif
+*/
+#ifdef RIO_GLES
+    gladLoadGLES2(glfwGetProcAddress);
+#else
+    gladLoadGL(glfwGetProcAddress);
+#endif
+
 
     // Retrieve and log the renderer string
     const char* renderer_str = (const char*)glGetString(GL_RENDERER);
     if (renderer_str)
     {
-        RIO_LOG("Renderer: %s\n", renderer_str);
+        RIO_LOG("OpenGL Renderer: %s\n", renderer_str);
     }
     else
     {
         RIO_LOG("Failed to retrieve the renderer string.\n");
     }
+    // Retrieve and log the OpenGL version string
+    const char* version_str = (const char*)glGetString(GL_VERSION);
+    if (version_str)
+    {
+        RIO_LOG("OpenGL Version: %s\n", version_str);
+    }
+    else
+    {
+        RIO_LOG("Failed to retrieve the OpenGL version string.\n");
+    }
+
+    // Retrieve and log the OpenGL core profile version string
+    const char* core_profile_version_str = (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+    if (core_profile_version_str)
+    {
+        RIO_LOG("OpenGL GLSL Version: %s\n", core_profile_version_str);
+    }
+    else
+    {
+        RIO_LOG("Failed to retrieve the OpenGL core profile version string.\n");
+    }
 
     // Set swap interval to 1 by default
     setSwapInterval(1);
 
-    // Initialize GLEW
-    GLenum err = glewInit();
-#ifndef __EMSCRIPTEN__
-    if (err != GLEW_OK && err != GLEW_ERROR_NO_GLX_DISPLAY)
-#else
-    if (err != GLEW_OK)
-#endif
-    {
-        RIO_LOG("GLEW Initialization Error: %s (code: %d)\n", glewGetErrorString(err), err);
-        terminate_();
-        return false;
-    }
-
     // Check clip control extension
     #ifndef RIO_NO_CLIP_CONTROL
-    if (!GLEW_VERSION_4_5 && !GLEW_ARB_clip_control)
+    if (!(GLAD_GL_VERSION_4_5 || GLAD_GL_ARB_clip_control))
     {
-        RIO_LOG("Required OpenGL extensions not supported: GLEW_VERSION_4_5, GLEW_ARB_clip_control. Continuing anyway.\n");
+        printf("Required OpenGL extensions not supported: GL_VERSION_4_5, GL_ARB_clip_control. Continuing anyway.\n");
+
         /*terminate_();
         return false;*/
     }
@@ -447,6 +495,25 @@ void Window::swapBuffers() const
 
     // Restore viewport and scissor
     restoreVp_();
+
+    // FPS calculation and update
+    static double lastTime = glfwGetTime();
+    static int nbFrames = 0;
+
+    // Measure speed
+    double currentTime = glfwGetTime();
+    nbFrames++;
+    if (currentTime - lastTime >= 1.0) { // If last update was more than 1 second ago
+        double fps = double(nbFrames) / (currentTime - lastTime);
+
+        char title[256];
+        snprintf(title, sizeof(title), "Game - FPS: %.2f", fps);
+
+        glfwSetWindowTitle(mNativeWindow.mpGLFWwindow, title);
+
+        nbFrames = 0;
+        lastTime = currentTime;
+    }
 }
 
 void Window::clearColor(f32 r, f32 g, f32 b, f32 a)
