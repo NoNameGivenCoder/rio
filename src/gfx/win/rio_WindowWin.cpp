@@ -97,6 +97,9 @@ void errorCallbackForGLFW(int error, const char* msg)
 
 bool Window::initialize_(bool resizable, bool invisible, u32 gl_major, u32 gl_minor)
 {
+#ifdef RIO_NO_GLFW_CALLS
+    RIO_LOG("WARNING: Window::initialize_ was called, but this was built with the definition RIO_NO_GLFW_CALLS set, which means that no GLFW calls will be made, and no windows will ever be created. This program will probably crash now.\n");
+#else
     glfwSetErrorCallback(errorCallbackForGLFW);
 
     // Initialize GLFW
@@ -126,7 +129,7 @@ bool Window::initialize_(bool resizable, bool invisible, u32 gl_major, u32 gl_mi
 #ifndef __EMSCRIPTEN__
     glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
     glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, 1);
-#endif
+#endif // __EMSCRIPTEN__
     // Request OpenGL Core Profile
     RIO_LOG("OpenGL Context Version: %u.%u\n", gl_major, gl_minor);
 #ifdef RIO_GLES
@@ -167,12 +170,32 @@ bool Window::initialize_(bool resizable, bool invisible, u32 gl_major, u32 gl_mi
     printf("EGL %d.%d\n", GLAD_VERSION_MAJOR(egl_version), GLAD_VERSION_MINOR(egl_version));
 #endif
 */
-#ifdef RIO_GLES
-    gladLoadGLES2(glfwGetProcAddress);
-#else
-    gladLoadGL(glfwGetProcAddress);
-#endif
 
+#ifndef RIO_NO_GL_LOADER
+    #if RIO_USE_GLEW
+            GLenum err = glewInit();
+        #ifndef __EMSCRIPTEN__
+            if (err != GLEW_OK && err != GLEW_ERROR_NO_GLX_DISPLAY)
+        #else
+            if (err != GLEW_OK)
+        #endif // __EMSCRIPTEN__
+            {
+                RIO_LOG("GLEW Initialization Error: %s (code: %d)\n", glewGetErrorString(err), err);
+                terminate_();
+                return false;
+            }
+    #else
+        // use GLAD by default
+        #ifdef RIO_GLES
+            gladLoadGLES2(glfwGetProcAddress);
+        #else
+            gladLoadGL(glfwGetProcAddress);
+        #endif // RIO_GLES
+    #endif // RIO_USE_GLEW
+
+#else
+    RIO_LOG("WARNING: In Window::initialize_, but RIO_NO_GL_LOADER was defined. This will probably crash right now if no other GL loader is resident.\n");
+#endif // RIO_NO_GL_LOADER
 
     // Retrieve and log the renderer string
     const char* renderer_str = (const char*)glGetString(GL_RENDERER);
@@ -211,7 +234,11 @@ bool Window::initialize_(bool resizable, bool invisible, u32 gl_major, u32 gl_mi
 
     // Check clip control extension
     #ifndef RIO_NO_CLIP_CONTROL
+#if RIO_USE_GLEW
+    if (!GLEW_VERSION_4_5 && !GLEW_ARB_clip_control)
+#else
     if (!(GLAD_GL_VERSION_4_5 || GLAD_GL_ARB_clip_control))
+#endif // RIO_USE_GLEW
     {
         printf("Required OpenGL extensions not supported: GL_VERSION_4_5, GL_ARB_clip_control. Continuing anyway.\n");
 
@@ -264,13 +291,17 @@ bool Window::initialize_(bool resizable, bool invisible, u32 gl_major, u32 gl_mi
     // Set callback if window is resizable
     if (resizable)
         glfwSetFramebufferSizeCallback(mNativeWindow.mpGLFWwindow, &Window::resizeCallback_);
-
+#endif // RIO_NO_GLFW_CALLS
     return true;
 }
 
 bool Window::isRunning() const
 {
+#ifndef RIO_NO_GLFW_CALLS
     return !glfwWindowShouldClose(mNativeWindow.mpGLFWwindow);
+#else
+    return false;
+#endif
 }
 
 void Window::terminate_()
@@ -290,8 +321,9 @@ void Window::terminate_()
     }
 
     gScreenShader.unload();
-
+#ifndef RIO_NO_GLFW_CALLS
     glfwTerminate();
+#endif
 }
 
 bool Window::createFb_()
@@ -432,8 +464,9 @@ void Window::destroyFb_()
 
 void Window::makeContextCurrent() const
 {
+#ifndef RIO_NO_GLFW_CALLS
     glfwMakeContextCurrent(mNativeWindow.mpGLFWwindow);
-
+#endif
     // Bind our Frame Buffer
     RIO_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, mNativeWindow.mFramebufferHandle));
     RIO_GL_CALL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mNativeWindow.mColorBufferTextureHandle, 0));
@@ -442,7 +475,9 @@ void Window::makeContextCurrent() const
 
 void Window::setSwapInterval(u32 swap_interval)
 {
+#ifndef RIO_NO_GLFW_CALLS
     glfwSwapInterval(0);
+#endif
     mNativeWindow.setSwapInterval_(swap_interval);
 }
 
@@ -483,7 +518,7 @@ void Window::swapBuffers() const
 
     // Draw it
     RIO_GL_CALL(glDrawArrays(GL_TRIANGLES, 0, 6));
-
+#ifndef RIO_NO_GLFW_CALLS
     // Swap front and back buffers
     glfwSwapBuffers(mNativeWindow.mpGLFWwindow);
     mNativeWindow.onSwapBuffers_();
@@ -495,7 +530,7 @@ void Window::swapBuffers() const
 
     // Restore viewport and scissor
     restoreVp_();
-
+#ifdef RIO_DEBUG
     // FPS calculation and update
     static double lastTime = glfwGetTime();
     static int nbFrames = 0;
@@ -506,14 +541,16 @@ void Window::swapBuffers() const
     if (currentTime - lastTime >= 1.0) { // If last update was more than 1 second ago
         double fps = double(nbFrames) / (currentTime - lastTime);
 
-        char title[256];
-        snprintf(title, sizeof(title), "Game - FPS: %.2f", fps);
+        char title[32];
+        snprintf(title, sizeof(title), "FPS: %.2f", fps);
 
         glfwSetWindowTitle(mNativeWindow.mpGLFWwindow, title);
 
         nbFrames = 0;
         lastTime = currentTime;
     }
+#endif // RIO_DEBUG
+#endif // RIO_NO_GLFW_CALLS
 }
 
 void Window::clearColor(f32 r, f32 g, f32 b, f32 a)

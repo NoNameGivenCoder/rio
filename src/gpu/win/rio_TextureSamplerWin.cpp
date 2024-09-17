@@ -95,7 +95,9 @@ void TextureSampler2D::updateFilter_() const
 #endif
 
 // GL_CLAMP was removed in opengl 3.2
-#define GL_CLAMP GL_CLAMP_TO_EDGE
+#ifndef GL_CLAMP
+    #define GL_CLAMP GL_CLAMP_TO_EDGE
+#endif
 
 void TextureSampler2D::updateWrap_() const
 {

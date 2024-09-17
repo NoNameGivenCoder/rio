@@ -3,16 +3,30 @@
 
 #include <misc/rio_Types.h>
 
-#ifdef RIO_GLES
-    #include <glad/gles2.h>
-    #define glDepthRange glDepthRangef
-    #define glClearDepth glClearDepthf
-#else
-    #include <glad/gl.h>
-#endif
+#ifndef RIO_NO_GL_LOADER
+    #if RIO_USE_GLEW
+            #include <GL/glew.h>
+    #else
+        // use GLAD by default
+        #ifdef RIO_GLES
+            #include <glad/gles2.h>
+        #else
+            #include <glad/gl.h>
+        #endif
+    #endif // RIO_USE_GLEW
+#endif // RIO_NO_GL_LOADER
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+
+// define functions that do not exist on OpenGL ES
+#ifdef RIO_GLES
+    #define glDepthRange glDepthRangef
+    #define glClearDepth glClearDepthf
+    #define RIO_NO_CLIP_CONTROL // do not call glClipControl
+#elif defined(__APPLE__)
+    #define RIO_NO_CLIP_CONTROL // not supported on macOS
+#endif // RIO_GLES
 
 #ifdef RIO_DEBUG
 
