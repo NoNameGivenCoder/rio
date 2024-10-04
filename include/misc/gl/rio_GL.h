@@ -23,9 +23,13 @@
 #ifdef RIO_GLES
     #define glDepthRange glDepthRangef
     #define glClearDepth glClearDepthf
-    #define RIO_NO_CLIP_CONTROL // do not call glClipControl
+    #ifndef RIO_NO_CLIP_CONTROL
+        #define RIO_NO_CLIP_CONTROL // do not call glClipControl
+    #endif
 #elif defined(__APPLE__)
-    #define RIO_NO_CLIP_CONTROL // not supported on macOS
+    #ifndef RIO_NO_CLIP_CONTROL
+        #define RIO_NO_CLIP_CONTROL // not supported on macOS
+    #endif
 #endif // RIO_GLES
 
 #ifdef RIO_DEBUG

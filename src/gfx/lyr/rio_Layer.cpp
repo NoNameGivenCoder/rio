@@ -119,8 +119,8 @@ void Layer::setViewport(s32 x, s32 y, u32 width, u32 height, f32 near, f32 far, 
     mViewport.y = y;
     mViewport.width = width;
     mViewport.height = height;
-    mViewport.near = near;
-    mViewport.far = far;
+    mViewport.nearPlane = near;
+    mViewport.farPlane = far;
     mViewport.frame_buffer_height = frame_buffer_height;
     mFlags.set(FLAGS_SET_VIEWPORT);
 }

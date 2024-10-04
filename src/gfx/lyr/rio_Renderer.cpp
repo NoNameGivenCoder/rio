@@ -61,7 +61,7 @@ void Renderer::render() const
 
         if (layer.mFlags.isOn(Layer::FLAGS_SET_VIEWPORT))
         {
-            Graphics::setViewport(layer.mViewport.x, layer.mViewport.y, layer.mViewport.width, layer.mViewport.height, layer.mViewport.near, layer.mViewport.far, layer.mViewport.frame_buffer_height);
+            Graphics::setViewport(layer.mViewport.x, layer.mViewport.y, layer.mViewport.width, layer.mViewport.height, layer.mViewport.nearPlane, layer.mViewport.farPlane, layer.mViewport.frame_buffer_height);
             viewport_changed = true;
         }
         else if (viewport_changed)

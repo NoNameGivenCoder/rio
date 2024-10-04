@@ -192,8 +192,10 @@ protected:
         s32 y;
         u32 width;
         u32 height;
-        f32 near;
-        f32 far;
+        // previously named near and far but
+        // for whatever reason broke windows with no GLEW
+        f32 nearPlane;
+        f32 farPlane;
         s32 frame_buffer_height;
     } mViewport;
 
