@@ -102,6 +102,11 @@ bool Window::initialize_(bool resizable, bool invisible, u32 gl_major, u32 gl_mi
 #else
     glfwSetErrorCallback(errorCallbackForGLFW);
 
+#ifdef RIO_USE_OSMESA
+    // only works on glfw 3.4 and higher
+    glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_NULL);
+#endif
+
     // Initialize GLFW
     if (!glfwInit())
     {
@@ -141,6 +146,9 @@ bool Window::initialize_(bool resizable, bool invisible, u32 gl_major, u32 gl_mi
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #if defined(RIO_GLES) && !defined(__EMSCRIPTEN__)
     glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
+#elif defined(RIO_USE_OSMESA)
+    // "OpenGL ES is not available on OSMesa"
+    glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_OSMESA_CONTEXT_API);
 #endif
 
     // Enforce double-buffering
