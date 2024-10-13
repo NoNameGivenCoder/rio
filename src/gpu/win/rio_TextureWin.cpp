@@ -33,12 +33,16 @@ namespace rio {
 Texture2D::Texture2D(const char* base_fname)
     : mSelfAllocated(true)
 {
+#ifndef RIO_NO_TEXTURE2D_FILE_CTOR
     FileDevice::LoadArg arg;
     arg.path = std::string("textures/") + base_fname + ".rtx";
 
     u8* const file = FileDeviceMgr::instance()->load(arg);
     load_(file, arg.read_size);
     MemUtil::free(file);
+#else
+    RIO_ASSERT(false);
+#endif // RIO_NO_TEXTURE2D_FILE_CTOR
 }
 
 Texture2D::Texture2D(TextureFormat format, u32 width, u32 height, u32 numMips)

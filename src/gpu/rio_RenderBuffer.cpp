@@ -212,6 +212,7 @@ void RenderBuffer::clear(u32 color_target_index, u32 clear_flag, const Color4f& 
 #endif
     }
 
+#ifndef RIO_NO_GLFW_CALLS
     Window::instance()->makeContextCurrent();
 
     u32 width = Window::instance()->getWidth();
@@ -219,6 +220,7 @@ void RenderBuffer::clear(u32 color_target_index, u32 clear_flag, const Color4f& 
 
     Graphics::setViewport(0, 0, width, height);
     Graphics::setScissor(0, 0, width, height);
+#endif
 }
 
 bool RenderBuffer::read(
@@ -269,8 +271,9 @@ bool RenderBuffer::read(
         glReadPixels(0, 0, width, height, native_format.format, native_format.type, pixels);
 #endif
     }
-
+#ifndef RIO_NO_GLFW_CALLS
     Window::instance()->makeContextCurrent();
+#endif
     return ret;
 }
 

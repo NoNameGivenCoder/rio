@@ -139,6 +139,7 @@ void OrthoProjection::set(f32 near, f32 far, f32 top, f32 bottom, f32 left, f32 
 
 void OrthoProjection::setFromWindow(f32 near, f32 far)
 {
+#ifndef RIO_NO_GLFW_CALLS
     const Window* const window = Window::instance();
     RIO_ASSERT(window);
 
@@ -148,6 +149,9 @@ void OrthoProjection::setFromWindow(f32 near, f32 far)
     setNear(near);
     setFar(far);
     setTBLR(window_height_2, -window_height_2, -window_width_2, window_width_2);
+#else
+    RIO_ASSERT(false);
+#endif
 }
 
 void OrthoProjection::updateMatrix_() const

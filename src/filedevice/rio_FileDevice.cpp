@@ -15,7 +15,7 @@ static inline u32 max(u32 x, u32 y)
 static inline u32 align(u32 x, u32 y)
 {
     RIO_ASSERT(((y - 1) & y) == 0);
-    return (x + y - 1) & -y;
+    return (x + y - 1) & ~(y - 1); // bitwise NOT
 }
 
 }
