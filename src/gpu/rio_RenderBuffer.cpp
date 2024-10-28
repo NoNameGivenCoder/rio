@@ -93,21 +93,21 @@ void RenderBuffer::bindRenderTargetColor_() const
         if (mpColorTarget[i])
         {
             mpColorTarget[i]->bind(i);
-#if RIO_IS_WIN
+#if RIO_IS_WIN && !defined(RIO_GLES)
             mDrawBuffers[i] = GL_COLOR_ATTACHMENT0 + i;
-#endif // RIO_IS_WIN
+#endif // RIO_IS_WIN && !defined(RIO_GLES)
         }
-#if RIO_IS_WIN
+#if RIO_IS_WIN && !defined(RIO_GLES)
         else
         {
             mDrawBuffers[i] = GL_NONE;
         }
-#endif // RIO_IS_WIN
+#endif // RIO_IS_WIN && !defined(RIO_GLES)
     }
 
-#if RIO_IS_WIN
+#if RIO_IS_WIN && !defined(RIO_GLES)
     RIO_GL_CALL(glDrawBuffers(Graphics::RENDER_TARGET_MAX_NUM, mDrawBuffers));
-#endif // RIO_IS_WIN
+#endif // RIO_IS_WIN && !defined(RIO_GLES)
 }
 
 void RenderBuffer::bindRenderTargetDepth_() const
@@ -178,8 +178,10 @@ void RenderBuffer::clear(u32 color_target_index, u32 clear_flag, const Color4f& 
         if (clear_flag & CLEAR_FLAG_COLOR)
         {
             p_color_target->bind(color_target_index);
+#if !defined(RIO_GLES) || defined(GL_ES_VERSION_3_0)
             GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0 + color_target_index };
             RIO_GL_CALL(glDrawBuffers(1, drawBuffers));
+#endif
         }
 
         if (clear_flag & CLEAR_FLAG_DEPTH_STENCIL)
@@ -267,7 +269,9 @@ bool RenderBuffer::read(
 #elif RIO_IS_WIN
         bindFBO_();
         p_color_target->bind(color_target_index);
+#if !defined(RIO_GLES) || defined(GL_ES_VERSION_3_0)
         glReadBuffer(GL_COLOR_ATTACHMENT0 + color_target_index);
+#endif
         glReadPixels(0, 0, width, height, native_format.format, native_format.type, pixels);
 #endif
     }

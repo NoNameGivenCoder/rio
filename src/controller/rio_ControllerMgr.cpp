@@ -60,7 +60,7 @@ void ControllerMgr::initializeDefault_()
     mControllers.reserve(
 #if RIO_IS_CAFE
         5
-#elif RIO_IS_WIN
+#elif RIO_IS_WIN && !defined(RIO_NO_CONTROLLERS_WIN)
         1 + (GLFW_JOYSTICK_LAST + 1)
 #else
         0

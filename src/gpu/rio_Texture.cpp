@@ -170,6 +170,51 @@ bool TextureFormatUtil::getNativeTextureFormat(
 {
     switch (format)
     {
+#if defined(RIO_GLES) && !defined(GL_ES_VERSION_3_0)
+    case TEXTURE_FORMAT_R8_UNORM:
+        nativeFormat.internalformat = GL_LUMINANCE;
+        nativeFormat.format = GL_LUMINANCE;
+        nativeFormat.type = GL_UNSIGNED_BYTE;
+        return true;
+
+    case TEXTURE_FORMAT_R8_G8_UNORM:
+        nativeFormat.internalformat = GL_LUMINANCE_ALPHA;
+        nativeFormat.format = GL_LUMINANCE_ALPHA;
+        nativeFormat.type = GL_UNSIGNED_BYTE;
+        return true;
+
+    case TEXTURE_FORMAT_R5_G6_B5_UNORM:
+        nativeFormat.internalformat = GL_RGB;
+        nativeFormat.format = GL_RGB;
+        nativeFormat.type = GL_UNSIGNED_SHORT_5_6_5;
+        return true;
+
+    case TEXTURE_FORMAT_R5_G5_B5_A1_UNORM:
+        nativeFormat.internalformat = GL_RGBA;
+        nativeFormat.format = GL_RGBA;
+        nativeFormat.type = GL_UNSIGNED_SHORT_5_5_5_1;
+        return true;
+
+    case TEXTURE_FORMAT_R4_G4_B4_A4_UNORM:
+        nativeFormat.internalformat = GL_RGBA;
+        nativeFormat.format = GL_RGBA;
+        nativeFormat.type = GL_UNSIGNED_SHORT_4_4_4_4;
+        return true;
+
+    case TEXTURE_FORMAT_R8_G8_B8_A8_UNORM:
+    case TEXTURE_FORMAT_R8_G8_B8_A8_SRGB:
+        nativeFormat.internalformat = GL_RGBA;
+        nativeFormat.format = GL_RGBA;
+        nativeFormat.type = GL_UNSIGNED_BYTE;
+        return true;
+
+    case DEPTH_TEXTURE_FORMAT_R16_UNORM:
+        nativeFormat.internalformat = GL_DEPTH_COMPONENT;
+        nativeFormat.format = GL_DEPTH_COMPONENT;
+        nativeFormat.type = GL_UNSIGNED_SHORT;
+        return true;
+
+#else
     case TEXTURE_FORMAT_R8_UNORM:
         nativeFormat.internalformat = GL_R8;
         nativeFormat.format = GL_RED;
@@ -363,6 +408,7 @@ bool TextureFormatUtil::getNativeTextureFormat(
         nativeFormat.format = GL_DEPTH_STENCIL;
         nativeFormat.type = GL_FLOAT_32_UNSIGNED_INT_24_8_REV;
         return true;
+#endif
     default:
         RIO_ASSERT(false);
         MemUtil::set(&nativeFormat, 0, sizeof(NativeTextureFormat));

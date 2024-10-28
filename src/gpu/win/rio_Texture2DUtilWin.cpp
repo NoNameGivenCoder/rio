@@ -105,10 +105,13 @@ void Texture2DUtil::setSwizzleCurrent(u32 compMap)
 
 void Texture2DUtil::setNumMipsCurrent(u32 mipLevels)
 {
+#if !defined(RIO_GLES) || defined(GL_ES_VERSION_3_0)
     mipLevels = std::min(std::max(mipLevels, 1u), 14u);
-
     RIO_GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0));
     RIO_GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, mipLevels - 1));
+#else
+    RIO_LOG("Texture2DUtil::setNumMipsCurrent(%d) called but this is not supported on OpenGL ES 2.0 i think\n", mipLevels);
+#endif
 }
 
 void Texture2DUtil::uploadTextureCurrent(

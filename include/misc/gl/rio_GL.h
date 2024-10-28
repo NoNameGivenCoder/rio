@@ -16,8 +16,12 @@
     #endif // RIO_USE_GLEW
 #endif // RIO_NO_GL_LOADER
 
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
+#ifndef RIO_NO_GLFW_CALLS
+    #define GLFW_INCLUDE_NONE
+    #include <GLFW/glfw3.h>
+#else
+    typedef void GLFWwindow;
+#endif
 
 // define functions that do not exist on OpenGL ES
 #ifdef RIO_GLES

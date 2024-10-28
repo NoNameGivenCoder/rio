@@ -12,7 +12,9 @@ WinGamepadController::WinGamepadController(ControllerMgr* mgr, s32 channel)
     , mChannel(channel)
     , mGamepadName(nullptr)
 {
+#ifndef RIO_NO_CONTROLLERS_WIN
     RIO_ASSERT(channel <= GLFW_JOYSTICK_LAST);
+#endif
     mId = ControllerDefine::CONTROLLER_WIN_GAMEPAD;
 }
 
