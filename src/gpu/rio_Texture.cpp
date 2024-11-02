@@ -25,6 +25,7 @@ u8 TextureFormatUtil::getPixelByteSize(TextureFormat format)
     case TEXTURE_FORMAT_R32_UINT:
     case DEPTH_TEXTURE_FORMAT_R32_FLOAT:
     case TEXTURE_FORMAT_R8_G8_B8_A8_UNORM:
+    case TEXTURE_FORMAT_B8_G8_R8_A8_UNORM:
     case TEXTURE_FORMAT_R8_G8_B8_A8_UINT:
     case TEXTURE_FORMAT_R8_G8_B8_A8_SNORM:
     case TEXTURE_FORMAT_R8_G8_B8_A8_SINT:
@@ -95,6 +96,7 @@ bool TextureFormatUtil::isUsableAsRenderTargetColor(TextureFormat format)
     case DEPTH_TEXTURE_FORMAT_R32_FLOAT:
 #endif // RIO_IS_CAFE
     case TEXTURE_FORMAT_R8_G8_B8_A8_UNORM:
+    case TEXTURE_FORMAT_B8_G8_R8_A8_UNORM:
     case TEXTURE_FORMAT_R8_G8_B8_A8_UINT:
     case TEXTURE_FORMAT_R8_G8_B8_A8_SNORM:
     case TEXTURE_FORMAT_R8_G8_B8_A8_SINT:
@@ -407,6 +409,12 @@ bool TextureFormatUtil::getNativeTextureFormat(
         nativeFormat.internalformat = GL_DEPTH32F_STENCIL8;
         nativeFormat.format = GL_DEPTH_STENCIL;
         nativeFormat.type = GL_FLOAT_32_UNSIGNED_INT_24_8_REV;
+        return true;
+
+    case TEXTURE_FORMAT_B8_G8_R8_A8_UNORM:
+        nativeFormat.internalformat = GL_BGRA;
+        nativeFormat.format = GL_BGRA;
+        nativeFormat.type = GL_UNSIGNED_BYTE;
         return true;
 #endif
     default:

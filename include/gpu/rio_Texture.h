@@ -84,6 +84,11 @@ enum TextureFormat : u32
     DEPTH_FORMAT_D24_S8_UNORM           = 0x011,
     DEPTH_FORMAT_D24_S8_FLOAT           = 0x811,
     DEPTH_FORMAT_D32_FLOAT_S8_UINT_X24  = 0x81C
+#if RIO_IS_WIN
+    ,
+    // NOTE: formats not supported in GX2
+    TEXTURE_FORMAT_B8_G8_R8_A8_UNORM    = 0x900
+#endif
 };
 
 #if RIO_IS_CAFE
