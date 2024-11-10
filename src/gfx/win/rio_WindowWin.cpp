@@ -1,8 +1,10 @@
-#ifdef RIO_GLES
-    #define GLAD_EGL_IMPLEMENTATION
-    #define GLAD_GLES2_IMPLEMENTATION
-#else
-    #define GLAD_GL_IMPLEMENTATION
+#ifndef RIO_NO_GLAD_IMPLEMENTATION
+    #ifdef RIO_GLES
+        #define GLAD_EGL_IMPLEMENTATION
+        #define GLAD_GLES2_IMPLEMENTATION
+    #else
+        #define GLAD_GL_IMPLEMENTATION
+    #endif
 #endif
 
 #include <misc/rio_Types.h>

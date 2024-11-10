@@ -82,10 +82,23 @@ inline void GLCheckError(const char* file, s32 line, const char* arg = nullptr)
 
 #define RIO_GL_CHECK_ERROR() GLCheckError(__FILE__, __LINE__)
 
+
+#ifdef RIO_GL_TRACE
+#define RIO_GL_TRACE_LOG(ARG)                                                  \
+        do                                                                     \
+        {                                                                      \
+            RIO_LOG("[RIO_GL_TRACE] Function: %s | Call: %s | File: %s:%d\n",  \
+            __func__, #ARG, __FILE__, __LINE__); \
+        } while (0)
+#else
+#define RIO_GL_TRACE_LOG(ARG)
+#endif
+
 #define RIO_GL_CALL(ARG)                        \
     do                                          \
     {                                           \
         GLClearError(__FILE__, __LINE__);       \
+        RIO_GL_TRACE_LOG(ARG);                  \
         ARG;                                    \
         GLCheckError(__FILE__, __LINE__, #ARG); \
     } while (0)
