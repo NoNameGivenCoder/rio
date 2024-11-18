@@ -73,7 +73,7 @@ public:
     {
         ENUM_VAL(BLEND_FUNC_ADD,            GL_FUNC_ADD,                GX2_BLEND_COMBINE_MODE_ADD),
         ENUM_VAL(BLEND_FUNC_SUB,            GL_FUNC_SUBTRACT,           GX2_BLEND_COMBINE_MODE_SUB),
-#ifdef GL_MIN
+#if RIO_IS_CAFE || defined(GL_MIN)
         ENUM_VAL(BLEND_FUNC_MIN,            GL_MIN,                     GX2_BLEND_COMBINE_MODE_MIN),
         ENUM_VAL(BLEND_FUNC_MAX,            GL_MAX,                     GX2_BLEND_COMBINE_MODE_MAX),
 #elif defined(GL_MIN_EXT)
