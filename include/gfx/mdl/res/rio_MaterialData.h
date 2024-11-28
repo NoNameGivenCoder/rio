@@ -107,7 +107,7 @@ public:
 private:
     FixedString                         mName;      // Block name.
     ::rio::UniformBlock::ShaderStage    mStage;     // Block shader stage.
-    u32                                 _unused0;   // Unused (for now).
+    [[maybe_unused]] u32                _unused0;   // Unused (for now).
     u32                                 mSize;      // Total block size.
     Buffer<UniformVar>                  mUniforms;  // List of variables.
 };
@@ -353,8 +353,8 @@ private:
     BlendEquation           mBlendEquationA;
     Color4f                 mBlendConstantColor;
   //bool                    mAlphaTestEnable;               // Deprecated. (-> mRenderFlags & ALPHA_TEST_ENABLE)
-    CompareFunc             mAlphaTestFunc;                 // ^^^
-    f32                     mAlphaTestRef;                  // ^^^
+    [[maybe_unused]] CompareFunc mAlphaTestFunc;            // ^^^
+    [[maybe_unused]] f32    mAlphaTestRef;                  // ^^^
   //bool                    mColorMaskR;                                    -> mRenderFlags & COLOR_MASK_R
   //bool                    mColorMaskG;                                    -> mRenderFlags & COLOR_MASK_G
   //bool                    mColorMaskB;                                    -> mRenderFlags & COLOR_MASK_B

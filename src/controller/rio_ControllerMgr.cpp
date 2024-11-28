@@ -163,7 +163,7 @@ s32 ControllerMgr::findControllerPort(const Controller* controller) const
 
     size_t idx = std::distance(mControllers.cbegin(), std::find(mControllers.cbegin(), mControllers.cend(), controller));
     if (idx < mControllers.size())
-        return idx;
+        return static_cast<s32>(idx);
 
     return -1;
 }

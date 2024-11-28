@@ -124,8 +124,11 @@ private:
 public:
     VertexStream()
         : TListNode<VertexStream*>(this)
+        , mLocation(0)
         , mInternalFormat()
         , mFormat(FORMAT_INVALID)
+        , mOffset(0)
+        , mpVertexBuffer(nullptr)
     {
     }
 

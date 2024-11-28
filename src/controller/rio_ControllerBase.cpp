@@ -170,7 +170,7 @@ u32 ControllerBase::getStickHold_(u32 prev_hold, const Vector2f& stick, f32 hold
     }
     else
     {
-        u32 angle = std::atan2(stick.y, stick.x) / Mathf::pi() * 0x80000000;
+        u32 angle = static_cast<u32>(std::atan2(stick.y, stick.x) / Mathf::pi() * 0x80000000);
 
         if (angle < 0x10000000)
         {

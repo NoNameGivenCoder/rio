@@ -12,6 +12,7 @@ namespace rio {
 StdIOFileDevice::StdIOFileDevice(const std::string& drive_name, const std::string& cwd)
     : FileDevice(drive_name)
     , mCWD(cwd)
+    , mLastRawError(rio::RAW_ERROR_OK)
 {
 }
 

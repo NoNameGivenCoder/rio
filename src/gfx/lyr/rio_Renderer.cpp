@@ -51,13 +51,13 @@ void Renderer::render() const
             p_window->clearColor(layer.mClearColor.r, layer.mClearColor.g, layer.mClearColor.b, layer.mClearColor.a);
 
         if (layer.mFlags.isOn(Layer::FLAGS_CLEAR_DEPTH_STENCIL_BUFFER))
-            p_window->clearDepthStencil(layer.mClearDepth, layer.mClearDepth);
+            p_window->clearDepthStencil(layer.mClearDepth, layer.mClearStencil);
 
         else if (layer.mFlags.isOn(Layer::FLAGS_CLEAR_DEPTH_BUFFER))
             p_window->clearDepth(layer.mClearDepth);
 
         else if (layer.mFlags.isOn(Layer::FLAGS_CLEAR_STENCIL_BUFFER))
-            p_window->clearStencil(layer.mClearDepth);
+            p_window->clearStencil(layer.mClearStencil);
 
         if (layer.mFlags.isOn(Layer::FLAGS_SET_VIEWPORT))
         {

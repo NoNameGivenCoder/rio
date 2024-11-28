@@ -242,12 +242,13 @@ public:
     FileHandle()
         : mDevice(nullptr)
         , mOriginalDevice(nullptr)
+        , mHandleInner{ 0, 0 }
     {
     }
 
 private:
     FileHandle(const FileHandle&);
-    const FileHandle& operator=(const FileHandle&);
+    //const FileHandle& operator=(const FileHandle&); // Not defined?
 
 public:
     virtual ~FileHandle()
