@@ -1,5 +1,19 @@
-# RIO Engine
-A framework for easier game development on Wii U and Windows (32-bit strictly, for now) PC, as well as homebrew development on Wii U.  
+# RIO Arian Fork!!
+This is my fork of [RIO, a game framework by AboodXD](). Most of my changes are made to accommodate [my changes to FFL]() and running the [FFL-Testing renderer server](https://github.com/ariankordi/FFL-Testing/tree/renderer-server-prototype).
+
+As such, I'm not personally invested in using this for games. However, there are changes to be aware about in my fork, including:
+
+* Support for [non-Windows](https://github.com/ariankordi/rio/commit/6bc61c8f93b3371376289213eda5430061a0a1c3), [MSVC](https://github.com/ariankordi/rio/commit/a4bd3f2c70f4f977b208cedf38796069dc645548) building, and [a macOS fix](https://github.com/ariankordi/rio/commit/66c2ba133e503095b393fbfb33365c6c040f2683).
+* Ability to [hide the window](https://github.com/ariankordi/rio/commit/a21838d8ba464ae06c672cf1796ef7a2ace24105) and use [OSMesa](https://github.com/ariankordi/rio/commit/5207fe86b8997333167022efede5e018c4793b12) for off-screen rendering.
+* Changes to support [OpenGL ES 3.0](https://github.com/ariankordi/rio/commit/d5fac352ca2422392b1bf7fd770e8764de672ec2) with the `RIO_GLES` definition.
+* Instead of GLEW, my fork is using GLAD, which is embedded as a header so that there is no need to manually include it. [But you can still use GLAD, or no GL loader at all](https://github.com/ariankordi/rio/commit/63071e1bfad00b8e45e922855e56ff1968b3ada3).
+
+No intuitive build instructions for now, sorry. Best I can provide is [the FFL-Testing Makefile](https://github.com/ariankordi/FFL-Testing/blob/renderer-server-prototype/Makefile).
+
+Original README begins below.
+
+### Original README: RIO Engine
+A framework for easier game development on Wii U and Windows ~~(32-bit strictly, for now)~~ PC, as well as homebrew development on Wii U.  
   
 RIO guarantees equivalent behavior between PC and Wii U for all defined behavior (well, as far as my tests went :P), making it much easier to develop for Wii U on PC, removing the need for frequent and cumbersome testing on real HW (although testing is still recommended from time to time).  
   
@@ -20,8 +34,8 @@ Docs can be found... nowhere yet as I am still working on it. In the meantime, I
 
 Dependencies:
 ##### Windows
-* OpenGL (Minimum: v4.0 Core Profile, see `notes_windows.txt` for more)  
-* GLEW  
+* OpenGL (Minimum: 3.3 Core Profile, see `notes_windows.txt` for more)  
+* ~~GLEW~~
 * GLFW3  
 ##### Wii U
 * devkitPPC (Tested with latest version as of August 7th, 2022)  
