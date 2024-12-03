@@ -1,5 +1,5 @@
 # RIO Arian Fork!!
-This is my fork of [RIO, a game framework by AboodXD](). Most of my changes are made to accommodate [my changes to FFL]() and running the [FFL-Testing renderer server](https://github.com/ariankordi/FFL-Testing/tree/renderer-server-prototype).
+This is my fork of [RIO, a game framework by AboodXD](https://github.com/aboood40091/rio). Most of my changes are made to accommodate [my changes to FFL](https://github.com/ariankordi/ffl) and running the [FFL-Testing renderer server](https://github.com/ariankordi/FFL-Testing/tree/renderer-server-prototype).
 
 As such, I'm not personally invested in using this for games. However, there are changes to be aware about in my fork, including:
 
