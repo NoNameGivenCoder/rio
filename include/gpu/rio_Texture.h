@@ -201,7 +201,7 @@ public:
 
 private:
     Texture2D(const Texture2D&);
-    Texture2D& operator=(const Texture2D&);
+    //Texture2D& operator=(const Texture2D&);
 
 public:
     u32 getWidth() const { return mTextureInner.surface.width; }

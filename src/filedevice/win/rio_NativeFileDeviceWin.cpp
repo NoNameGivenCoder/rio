@@ -13,7 +13,7 @@ namespace {
 static inline std::string GetCWD()
 {
     std::string path = std::string(MAX_PATH, '\0');
-    GetModuleFileNameA(nullptr, &path[0], path.length());
+    GetModuleFileNameA(nullptr, &path[0], static_cast<DWORD>(path.length()));
     std::replace(path.begin(), path.end(), '\\', '/');
     return path.substr(0, path.find_last_of('/'));
 }

@@ -157,6 +157,7 @@ StdIOFileDevice::doRead_(
     mLastRawError = RAW_ERROR_OK;
 
     if (read_size)
+        // NOTE: will exceed and overflow past 2 GB.
         *read_size = result;
 
     return true;
