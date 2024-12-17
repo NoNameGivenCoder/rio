@@ -126,7 +126,8 @@ void changeShaderSrcVersionToGLSL300ES(std::string& shader_src)
 
 
     std::size_t version_pos = shader_src.find("#version");
-    if (version_pos != std::string::npos) {
+    if (version_pos != std::string::npos)
+    {
         std::size_t line_end = shader_src.find('\n', version_pos);
         std::string version_line = shader_src.substr(version_pos, line_end - version_pos);
 

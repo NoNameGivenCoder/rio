@@ -42,10 +42,12 @@ NativeFileDevice::NativeFileDevice(const std::string& drive_name)
 #include <algorithm>
 
 namespace {
-static inline std::string GetCWD() {
+static inline std::string GetCWD()
+{
     char buffer[PATH_MAX];
     char* result = getcwd(buffer, sizeof(buffer));
-    if (result) {
+    if (result)
+    {
         std::string path(result);
         std::replace(path.begin(), path.end(), '\\', '/');
         return path;

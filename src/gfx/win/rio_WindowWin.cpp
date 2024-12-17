@@ -559,7 +559,8 @@ void Window::swapBuffers() const
     // Measure speed
     double currentTime = glfwGetTime();
     nbFrames++;
-    if (currentTime - lastTime >= 1.0) { // If last update was more than 1 second ago
+    if (currentTime - lastTime >= 1.0)
+    { // If last update was more than 1 second ago
         double fps = double(nbFrames) / (currentTime - lastTime);
 
         char title[32];
