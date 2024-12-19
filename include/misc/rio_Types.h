@@ -92,7 +92,7 @@ static_assert(sizeof(f64) == 8);
     #endif
 #else
     #define RIO_ASSERT(ARG)
-    #define RIO_LOG(FMT, ARGS...)
+    #define RIO_LOG(FMT, ...)
 #endif // RIO_DEBUG
 
 #endif // RIO_TYPES_H
