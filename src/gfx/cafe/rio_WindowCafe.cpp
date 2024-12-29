@@ -1,6 +1,5 @@
 #include <misc/rio_Types.h>
 
-#define RIO_IS_CAFE 1
 #if RIO_IS_CAFE
 
 #include <audio/rio_AudioMgr.h>
